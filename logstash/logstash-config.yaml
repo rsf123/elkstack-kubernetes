@@ -1,9 +1,0 @@
-apiVersion: v1
-data:
-  logstash.yml: |
-    http.host: "0.0.0.0"
-    xpack.monitoring.elasticsearch.hosts: [ "http://es01:9200" ]
-kind: ConfigMap
-metadata:
-  name: logstashconfig
-  namespace: elk
