@@ -1,0 +1,13 @@
+apiVersion: v1
+data:
+  kibana.yml: |
+    server.name: kib01
+    server.host: "0"
+    elasticsearch.hosts: [ "${ELASTICSEARCH_HOSTS}" ]
+    monitoring.ui.container.elasticsearch.enabled: true
+    elasticsearch.username: "${KIBANA_USERNAME}"
+    elasticsearch.password: "${KIBANA_PASSWORD}"
+kind: ConfigMap
+metadata:
+  name: kibana-config
+  namespace: elk

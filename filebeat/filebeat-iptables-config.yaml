@@ -1,0 +1,22 @@
+apiVersion: v1
+data:
+  iptables.yml: |
+    # Module: iptables
+    # Docs: https://www.elastic.co/guide/en/beats/filebeat/7.9/filebeat-module-iptables.html
+
+    - module: iptables
+      log:
+        enabled: true
+        #var.convert_timezone: true
+        var.syslog_host: 0.0.0.0
+        var.syslog_port: 9001
+        # Set which input to use between syslog (default) or file.
+        #var.input: "file"
+
+        # Set custom paths for the log files. If left empty,
+        # Filebeat will choose the paths depending on your OS.
+        #var.paths: ["/var/log/test.data"]
+kind: ConfigMap
+metadata:
+  name: fb-iptablesconfig
+  namespace: elk

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+   name: kib01
+   namespace: elk
+   annotations:
+     metallb.universe.tf/address-pool: default
+   labels:
+     elk-component: kib01
+spec:
+   externalTrafficPolicy: Local
+   type: LoadBalancer
+   selector:
+      elk-component: kib01
+   ports:
+      - port: 5601
+        targetPort: 5601
+        name: "kibana5601"
+        protocol: TCP

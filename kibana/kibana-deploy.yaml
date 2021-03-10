@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    elk-component: kib01
+    elk-memory: heavy
+    app: elk
+  name: kib01
+  namespace: elk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      elk-component: kib01
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        elk-component: kib01
+        elk-memory: heavy
+        app: elk
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: elk-memory
+                operator: In
+                values:
+                - heavy
+            topologyKey: kubernetes.io/hostname
+      containers:
+        - env:
+            - name: ELASTICSEARCH_HOSTS
+              value: http://es01:9200
+            - name: ELASTICSEARCH_REQUESTTIMEOUT
+              value: "132000"
+            - name: ELASTICSEARCH_SHAREDTIMEOUT
+              value: "120000"
+            - name: ELASTICSEARCH_URL
+              value: http://es01:9200
+            - name: KIBANA_AUTOCOMPLETETERMINATEAFTER
+              value: "2500000"
+            - name: KIBANA_AUTOCOMPLETETIMEOUT
+              value: "3000"
+            - name: KIBANA_DEFAULTAPPIPD
+              value: dashboard/653cf1e0-2fd2-11e7.9.09ed-49759aed30f5
+            - name: LOGGING_DEST
+              value: stdout
+            - name: LOGGING_QUIET
+              value: "false"
+            - name: SERVER_MAXPAYLOADBYTES
+              value: "8388608"
+            - name: KIBANA_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: elastic_creds
+                  key: kib_username
+            - name: KIBANA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: elastic_creds
+                  key: kib_password
+            - name: TZ
+              value: America/New_York
+          image: docker.elastic.co/kibana/kibana:7.10.0
+          name: kib01
+          ports:
+            - containerPort: 5601
+          resources: {}
+          volumeMounts:
+            - mountPath: /usr/share/kibana/config/kibana.yml
+              name: kibana-config
+              subPath: kibana.yml
+      restartPolicy: Always
+      volumes:
+        - name: kibana-config
+          configMap:
+            name: kibana-config

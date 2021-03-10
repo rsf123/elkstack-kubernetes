@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  dns: "HOSTNAMEPTR \\b(?:[\\._0-9A-Za-z][0-9A-Za-z-]{0,62})(?:\\.(?:[\\._0-9A-Za-z][0-9A-Za-z-]{0,62}))*(\\.?|\\b)\r\nNODATA
+    NODATA-[[:word:]]+\r\nSRV _+.+\\S\r\nFQDN \\b(?:[\\w-][\\w-]{0,62})(?:\\.(?:[\\w-][\\w-]{0,62}))*(\\.?|\\b)\r\nDNSMASQPREFIX
+    %{SYSLOGTIMESTAMP:date} %{SYSLOGPROG}: %{INT:logrow} %{IP:source_host}\\/%{POSINT:source_port}\r\nURI
+    %{URIPROTO}:(//)?(?:%{URIHOST})?(?:%{URIPATH})?\r\n"
+kind: ConfigMap
+metadata:
+  name: logstashpattern
+  namespace: elk

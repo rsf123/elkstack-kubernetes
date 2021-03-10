@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+   name: ls01
+   namespace: elk
+   labels:
+     elk-component: ls01
+spec:
+   selector:
+      elk-component: ls01
+   ports:
+      - port: 5141
+        targetPort: 5141
+        name: "logstash5141"
+        protocol: TCP

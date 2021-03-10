@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: elastiflow_key
+  namespace: elk
+type: Opaque
+data:
+  # Create account/license with echo -n '<username or password>' | base64 -w 0
+  ef_account: ''
+  ef_license: ''

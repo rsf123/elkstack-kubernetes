@@ -1,0 +1,14 @@
+apiVersion: v1
+data:
+  elasticsearch.yml: |+
+    cluster.name: "docker-cluster"
+    network.host: 0.0.0.0
+    #xpack.security.enabled: true
+    indices.query.bool.max_clause_count: 8192
+    search.max_buckets: 25000
+    #discovery.type: single-node
+
+kind: ConfigMap
+metadata:
+  name: elasticconfig
+  namespace: elk

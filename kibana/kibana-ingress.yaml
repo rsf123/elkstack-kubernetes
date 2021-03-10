@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+   name: kibana-ingress
+   namespace: elk
+   annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+   ingressClassName: nginx
+   tls:
+   - hosts:
+       - kib.fischmanfamily.net
+     secretName: wildcard-fischmanfamily-net-prod-tls 
+   rules:
+   - host: kib.fischmanfamily.net
+     http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+             service:
+                name: kib01
+                port:
+                   number: 5601

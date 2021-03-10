@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: elk
+    elk-component: es01
+    elk-memory: heavy
+  name: es01
+  namespace: elk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      elk-component: es01
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        elk-component: es01
+        elk-memory: heavy
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: elk-memory
+                operator: In
+                values:
+                - heavy
+            topologyKey: kubernetes.io/hostname
+      containers:
+        - env:
+            - name: ES_JAVA_OPTS
+              value: -Xms2g -Xmx2g
+            - name: action.destructive_requires_name
+              value: "true"
+            - name: bootstrap.memory_lock
+              value: "true"
+            - name: cluster.name
+              value: elkstack
+            - name: discovery.type
+              value: single-node
+            - name: indices.query.bool.max_clause_count
+              value: "8192"
+            - name: node.name
+              value: es01
+            - name: search.max_buckets
+              value: "250000"
+          image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+          name: es01
+          volumeMounts:
+            - mountPath: /usr/share/elasticsearch/data
+              name: elasticdata
+            - mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+              subPath: elasticsearch.yml
+              name: elasticconfig
+      restartPolicy: Always
+      volumes:
+        - name: elasticdata
+          persistentVolumeClaim:
+            claimName: elasticdata
+        - name: elasticconfig
+          configMap:
+            name: elasticconfig

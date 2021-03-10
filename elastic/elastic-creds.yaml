@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: elastic_creds
+  namespace: elk
+type: Opaque
+data:
+  # Create username/password with echo -n '<username or password>' | base64 -w 0
+  fb_username: ''
+  fb_password: ''
+  kib_username: ''
+  kib_password: ''
+  ls_username: ''
+  ls_password: ''
+  ef_username: ''
+  ef_password: ''

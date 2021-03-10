@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+   name: elasticdata
+   namespace: elk
+spec:
+   accessModes:
+      - ReadWriteMany
+   storageClassName: nfs-storage
+   resources:
+      requests:
+         storage: 200Gi
+

@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    elk-component: ef01
+    elk-memory: heavy
+    app: elk
+  name: ef05
+  namespace: elk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      elk-component: ef01
+  strategy:
+      type: Recreate
+  template:
+    metadata:
+      labels:
+        elk-component: ef01
+        elk-memory: heavy
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: elk-memory
+                operator: In
+                values:
+                - heavy
+            topologyKey: kubernetes.io/hostname
+      containers:
+        - env:
+           - name: EF_FLOW_ACCOUNT_ID
+             valueFrom:
+               secretKeyRef:
+                 name: elastiflow_key
+                 key: ef_account
+           - name: EF_FLOW_LICENSE_KEY
+             valueFrom:
+               secretKeyRef:
+                 name: elastiflow_key
+                 key: ef_license
+           - name: EF_FLOW_LICENSED_CORES
+             value: "1"
+           - name: EF_FLOW_SERVER_UDP_PORT
+             value: "2055"
+           - name: EF_FLOW_DECODER_ENRICH_DNS_ENABLE
+             value: "true"
+           - name: EF_FLOW_DECODER_ENRICH_MAXMIND_ASN_ENABLE
+             value: "true"
+           - name: EF_FLOW_DECODER_ENRICH_MAXMIND_ASN_PATH
+             value: "maxmind/GeoLite2-ASN.mmdb"
+           - name: EF_FLOW_DECODER_ENRICH_MAXMIND_GEOIP_ENABLE
+             value: "true"
+           - name: EF_FLOW_DECODER_ENRICH_MAXMIND_GEOIP_PATH
+             value: "maxmind/GeoLite2-City.mmdb"
+           - name: EF_FLOW_DECODER_ENRICH_MAXMIND_GEOIP_VALUES
+             value: "city,country,country_code,location,timezone"
+           - name: EF_FLOW_DECODER_ENRICH_MAXMIND_GEOIP_LANG
+             value: "en"
+           - name: EF_FLOW_OUTPUT_ELASTICSEARCH_ENABLE
+             value: "true"
+           - name: EF_FLOW_OUTPUT_ELASTICSEARCH_ADDRESSES
+             value: "es01:9200"
+           - name: EF_FLOW_OUTPUT_ELASTICSEARCH_PASSWORD
+             valueFrom:
+               secretKeyRef:
+                 name: elastic_creds
+                 key: ef_password
+           - name: EF_FLOW_OUTPUT_ELASTICSEARCH_USERNAME
+             valueFrom:
+               secretKeyRef:
+                 name: elastic_creds
+                 key: ef_password
+          image: elastiflow/flow-collector:5.0.0
+          name: ef01
+          volumeMounts:
+            - mountPath: /etc/elastiflow
+              name: geodb 
+          ports:
+            - containerPort: 2055
+              protocol: UDP
+          resources: {}
+      restartPolicy: Always
+      volumes:
+        - name: geodb
+          persistentVolumeClaim:
+            claimName: geodb

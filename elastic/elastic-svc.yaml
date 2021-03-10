@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+   name: es01
+   namespace: elk
+   labels:
+     elk-component: es01
+spec:
+   selector:
+      elk-component: es01
+   ports:
+      - port: 9200
+        targetPort: 9200
+        name: "elastic9200"
+        protocol: TCP
