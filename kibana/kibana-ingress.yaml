@@ -10,10 +10,10 @@ spec:
    ingressClassName: nginx
    tls:
    - hosts:
-       - kib.fischmanfamily.net
-     secretName: wildcard-fischmanfamily-net-prod-tls 
+       - <<HOSTNAME FOR YOUR KIBANA SERVICE>>
+     secretName: <<WILDCARD CERTIFICATE NAME>>
    rules:
-   - host: kib.fischmanfamily.net
+   - host: <<HOSTNAME FOR YOUR KIBANA SERVICE>>
      http:
         paths:
         - path: /
